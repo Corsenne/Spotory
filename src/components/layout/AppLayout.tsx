@@ -1,0 +1,3 @@
+import { Home, Map, PlusCircle, Settings, Users } from 'lucide-react'; import { NavLink, Outlet } from 'react-router-dom';
+const items=[['/','ホーム',Home],['/map','地図',Map],['/visits/new','追加',PlusCircle],['/groups','共有',Users],['/settings','設定',Settings]] as const;
+export function AppLayout(){return <div className="app-shell"><main className="page"><Outlet/></main><nav className="bottom-nav" aria-label="メインナビゲーション">{items.map(([to,label,Icon])=><NavLink key={to} to={to} end={to==='/'} className={({isActive})=>isActive?'active':''}><Icon aria-hidden/><span>{label}</span></NavLink>)}</nav></div>}

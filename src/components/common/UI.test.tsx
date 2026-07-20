@@ -1,0 +1,2 @@
+import { render,screen } from '@testing-library/react'; import { describe,expect,it } from 'vitest'; import { ErrorMessage,Stars } from './UI';
+describe('UI',()=>{it('エラーをalertとして表示する',()=>{render(<ErrorMessage message="失敗しました"/>);expect(screen.getByRole('alert')).toHaveTextContent('失敗しました')});it('評価を読み上げ可能に表示する',()=>{render(<Stars value={4}/>);expect(screen.getByLabelText('評価4')).toBeInTheDocument()})});
