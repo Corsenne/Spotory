@@ -32,6 +32,7 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
+          VITE_GOOGLE_PORTABILITY_CLIENT_ID: ${{ secrets.VITE_GOOGLE_PORTABILITY_CLIENT_ID }}
           VITE_USE_MOCK_DATA: "false"
       - uses: actions/configure-pages@v5
         with:

@@ -29,12 +29,15 @@ function parseCsvRows(text: string) {
 export function parseTakeoutCsv(text: string): TakeoutPlace[] {
   const rows = parseCsvRows(text.replace(/^\uFEFF/, ''));
   if (rows.length < 2) return [];
-  const headers = rows[0].map(value => value.trim());
+  const nameHeaders = ['場所', '名前', 'Name', 'Title', 'タイトル'];
+  const headerIndex = rows.findIndex(row => row.some(value => nameHeaders.includes(value.trim())) && row.some(value => ['URL', 'Google Maps URL', 'item_content_url'].includes(value.trim())));
+  if (headerIndex < 0) return [];
+  const headers = rows[headerIndex].map(value => value.trim());
   const column = (...names: string[]) => headers.findIndex(header => names.includes(header));
-  const nameIndex = column('場所', '名前', 'Name');
+  const nameIndex = column(...nameHeaders);
   const addressIndex = column('住所', 'Address');
-  const urlIndex = column('URL', 'Google Maps URL');
-  return rows.slice(1).flatMap(row => {
+  const urlIndex = column('URL', 'Google Maps URL', 'item_content_url');
+  return rows.slice(headerIndex + 1).flatMap(row => {
     const name = clean(row[nameIndex]); if (!name) return [];
     const place = { name, address: clean(row[addressIndex]), latitude: null, longitude: null, google_maps_url: clean(row[urlIndex]) || null };
     return [{ ...place, key: keyOf(place) }];

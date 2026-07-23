@@ -10,4 +10,8 @@ describe('Google Takeout parser', () => {
     const result = parseTakeoutCsv('場所,住所,URL\r\n"店, 本店",東京都,https://maps.google.com/\r\n');
     expect(result[0]).toMatchObject({ name: '店, 本店', address: '東京都' });
   });
+  it('説明行の後にあるSavedコレクションのCSVを読む', () => {
+    const result = parseTakeoutCsv('お気に入りの店\r\n\r\nTitle,item_content_url,Note\r\n店,https://www.google.com/maps/place/test,メモ\r\n');
+    expect(result[0]).toMatchObject({ name: '店', google_maps_url: 'https://www.google.com/maps/place/test' });
+  });
 });
