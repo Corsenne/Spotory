@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { APIProvider, useMapsLibrary } from '@vis.gl/react-google-maps';
-import { Link2, MapPin, Trash2 } from 'lucide-react';
+import { ClipboardPaste, Link2, MapPin, Smartphone, Trash2 } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
 import { repository } from '../../repositories/spotoryRepository';
 import type { TakeoutPlace } from '../takeout/takeoutParser';
@@ -45,7 +45,17 @@ function SharedPlacesControl() {
     addSharedCandidate({ title, text: value, url }); setManual(''); setMessage('追加候補へ入れました。');
   }
 
-  return <section className="shared-importer"><h2>Google Mapsから共有</h2><p>Google Mapsで店舗の共有先にSpotoryを選ぶと、ここへ追加候補として貯まります。</p><div className="share-paste"><textarea rows={2} value={manual} onChange={event => setManual(event.target.value)} placeholder="共有内容やGoogle Maps URLを貼り付け"/><button type="button" className="secondary" onClick={addManual}><Link2/>候補へ追加</button></div>{items.length > 0 ? <><div className="shared-candidate-list">{items.map(item => <article key={item.id}><MapPin/><div><b>{resolved[item.id]?.name || candidateQuery(item) || '名称未取得'}</b><small>{resolved[item.id]?.address || item.url || item.text}</small></div><button type="button" aria-label="候補を削除" onClick={() => removeSharedCandidates([item.id])}><Trash2/></button></article>)}</div><button type="button" className="secondary full" disabled={busy || !placesLibrary} onClick={() => void resolveAll()}>{busy ? '確認中…' : '店舗情報をまとめて確認'}</button><button type="button" className="primary full" disabled={busy || !Object.keys(resolved).length} onClick={() => void register()}>確認済みの{Object.keys(resolved).length}件を登録</button></> : <p className="hint">共有された店舗はまだありません。Spotoryが共有先に出ない端末では、Google Mapsの共有内容を上へ貼り付けてください。</p>}{message && <p className="notice" role="status">{message}</p>}</section>;
+  async function readClipboard() {
+    try {
+      const value = (await navigator.clipboard.readText()).trim();
+      if (!value) { setMessage('クリップボードに文字やURLがありません。'); return; }
+      setManual(value); setMessage('共有内容を読み込みました。「候補へ追加」を押してください。');
+    } catch {
+      setMessage('クリップボードを読み取れませんでした。入力欄を長押しして貼り付けてください。');
+    }
+  }
+
+  return <section className="shared-importer"><h2>Google Mapsから共有</h2><p>Google Mapsの共有内容を候補として貯め、あとからまとめて登録できます。</p><details className="ios-shortcut-guide"><summary><Smartphone/> iPhoneの共有メニューに追加する</summary><ol><li>iPhoneの「ショートカット」で新規ショートカットを作り、名前を「Spotoryへ追加」にします。</li><li>詳細設定で「共有シートに表示」をオンにし、受け入れる種類を「URL」「テキスト」「マップリンク」にします。</li><li>アクション「クリップボードにコピー」を追加し、内容を「ショートカットの入力」にします。</li><li>続けて「Appを開く」でSpotoryを選びます。選べない場合はSpotoryをホーム画面から開いてください。</li><li>Google Mapsの共有から「Spotoryへ追加」を実行し、下の「クリップボードから読込」を押します。</li></ol></details><div className="share-paste"><textarea rows={2} value={manual} onChange={event => setManual(event.target.value)} placeholder="共有内容やGoogle Maps URLを貼り付け"/><div className="share-paste-actions"><button type="button" className="secondary" onClick={() => void readClipboard()}><ClipboardPaste/>クリップボードから読込</button><button type="button" className="secondary" onClick={addManual}><Link2/>候補へ追加</button></div></div>{items.length > 0 ? <><div className="shared-candidate-list">{items.map(item => <article key={item.id}><MapPin/><div><b>{resolved[item.id]?.name || candidateQuery(item) || '名称未取得'}</b><small>{resolved[item.id]?.address || item.url || item.text}</small></div><button type="button" aria-label="候補を削除" onClick={() => removeSharedCandidates([item.id])}><Trash2/></button></article>)}</div><button type="button" className="secondary full" disabled={busy || !placesLibrary} onClick={() => void resolveAll()}>{busy ? '確認中…' : '店舗情報をまとめて確認'}</button><button type="button" className="primary full" disabled={busy || !Object.keys(resolved).length} onClick={() => void register()}>確認済みの{Object.keys(resolved).length}件を登録</button></> : <p className="hint">共有された店舗はまだありません。上の入力欄へ共有内容を読み込んでください。</p>}{message && <p className="notice" role="status">{message}</p>}</section>;
 }
 
 export function SharedPlacesImporter() {

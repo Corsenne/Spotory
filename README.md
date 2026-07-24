@@ -60,7 +60,7 @@ Google Maps Platformで Maps JavaScript API と Places API (New) を有効化し
 
 Google保存リスト連携には、Data Portability APIを有効化したWeb OAuth Client IDが別途必要です。OAuthスコープは `dataportability.saved.collections` だけを要求し、通常ログインのスコープとは混在させません。取得したアクセストークンとジョブIDはブラウザのsessionStorageに一時保持し、Supabaseには保存しません。
 
-Data Portability APIはGoogleが指定する対応地域のみで利用できます。日本では、インストールしたPWAをGoogle Mapsの共有先に選び、複数店舗を候補へ貯めてから設定画面でまとめて確認・登録できます。共有先にSpotoryが表示されない端末では、共有内容またはGoogle Maps URLを設定画面へ貼り付けます。Google Takeout ZIPの取込も予備手段として利用できます。
+Data Portability APIはGoogleが指定する対応地域のみで利用できます。日本では、インストールしたPWAをGoogle Mapsの共有先に選び、複数店舗を候補へ貯めてから設定画面でまとめて確認・登録できます。iPhoneではWeb Share Targetが使えないため、設定画面の案内に沿ってiOSショートカット「Spotoryへ追加」を作成し、共有内容をクリップボード経由で取り込みます。Google Takeout ZIPの取込も予備手段として利用できます。
 
 ## GitHub Pages
 
